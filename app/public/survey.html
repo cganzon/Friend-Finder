@@ -9,8 +9,23 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
     <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+        #best-friend-image {
+            width: 100%;
+        };
+    </style>
 </head>
 
 <body>
@@ -25,12 +40,13 @@
             </div>
             <div class="form-group">
                 <label for="image">Link to Photo Image (Required)</label>
-                <input type="text" class="form-control" id="image" placeholder="Enter a link to a picture of yourself" required>
+                <input type="text" class="form-control" id="image" placeholder="Enter a link to a picture of yourself"
+                    required>
             </div>
             <hr class="my-4">
             <div class="form-group">
                 <h3>Question 1</h3>
-                <label for="exampleFormControlSelect1">Your mind is always buzzing with unexplored ideas and
+                <label for="question1">Your mind is always buzzing with unexplored ideas and
                     plans.</label>
                 <select class="form-control" id="question1">
                     <option value="" disabled selected="selected">Select an option</option>
@@ -43,7 +59,7 @@
             </div>
             <div class="form-group">
                 <h3 class="mt-3">Question 2</h3>
-                <label for="exampleFormControlSelect1">Generally speaking, you rely more on your experience than
+                <label for="question2">Generally speaking, you rely more on your experience than
                     your imagination.</label>
                 <select class="form-control" id="question2">
                     <option value="" disabled selected="selected">Select an option</option>
@@ -56,7 +72,7 @@
             </div>
             <div class="form-group">
                 <h3 class="mt-3">Question 3</h3>
-                <label for="exampleFormControlSelect1">You find it easy to stay relaxed and focused even when there
+                <label for="question3">You find it easy to stay relaxed and focused even when there
                     is some pressure.</label>
                 <select class="form-control" id="question3">
                     <option value="" disabled selected="selected">Select an option</option>
@@ -67,7 +83,26 @@
                     <option value="5">5 (Strongly Agree)</option>
                 </select>
             </div>
-            <button type="submit" id="submit" class="btn btn-primary btn-block">Submit</button>
+            <button type="submit" id="submit" class="btn btn-primary btn-block" data-toggle="modal"
+                data-target="#best-friend-modal">Submit</button>
+
+            <!-- Modal for best friend match -->
+            <div id="best-friend-modal" class="modal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Best Match</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <h3 id="best-friend-name" class="modal-title"></h3>
+                            <img id="best-friend-image" class="materialboxed" width="650" src="">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </form>
 
         <footer class="mt-4">
@@ -77,10 +112,40 @@
     </div>
 
     <script>
-        $("#submit").on("click", function(event) {
+        $("#submit").on("click", function (event) {
             event.preventDefault();
-            alert("You clicked the button!");
-            // store user's input in an object and push it into friends array
+            var userChoices = [
+                $("#question1").val(),
+                $("#question2").val(),
+                $("#question3").val()
+            ];
+            // Store user's input in an object
+            var newUser = {
+                name: $("#name").val().trim(),
+                photo: $("#image").val().trim(),
+                scores: userChoices
+            };
+            console.log(newUser);
+
+            // Triggers apiRoutes.js to push newUser into friends array
+            $.post("/api/friends", newUser, function (data) {
+                if (data) {
+                    // Trigger new friend modal here
+                    console.log(data.name);
+                    console.log(data.photo);
+
+                    // Set the name and image values of friend match
+                    $("#best-friend-name").text(data.name);
+                    $("#best-friend-image").attr("src", data.photo);
+
+                    // Clear the form when submitting
+                    $("#name").val("");
+                    $("#image").val("");
+                    $("#question1").val("");
+                    $("#question2").val("");
+                    $("#question3").val("");
+                };
+            });
         });
     </script>
 </body>
