@@ -10,7 +10,7 @@ module.exports = (app) => {
     // Adding to friends API after user takes the survey
     app.post("/api/friends", (req, res) => {
 
-        console.log(req.body);
+        // console.log(req.body);
         for (let i = 0; i < req.body.scores.length; i++) {
             // Converting scores to integers
             req.body.scores[i] = parseInt(req.body.scores[i]);
@@ -24,7 +24,7 @@ module.exports = (app) => {
             for (let j = 0; j < friendsList[i].scores.length; j++) {
                 let scoreDiff = Math.abs(req.body.scores[j] - friendsList[i].scores[j]);
                 totalDiff += scoreDiff;
-                console.log(totalDiff);
+                // console.log(totalDiff);
             };
 
             if (totalDiff < minDiff) {
