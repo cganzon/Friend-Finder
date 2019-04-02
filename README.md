@@ -6,7 +6,8 @@ Technologies used:
 * HTML
 * CSS
 * Bootstrap
+* Font Awesome
 * Javascript
 * jQuery
+* Node.js
 * Express
-* Font Awesome
